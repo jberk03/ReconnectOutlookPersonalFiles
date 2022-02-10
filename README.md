@@ -1,0 +1,1 @@
+# Reconnect Outlook Personal Files When reconnecting to personal outlook files is necessary, this launches a GUI for office personel and performs the steps without someone needing to remotely connect to their workstation.
