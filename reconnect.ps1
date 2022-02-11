@@ -1,19 +1,14 @@
 <#  
 .SYNOPSIS  
-    Utility for PC profile owners, which returns the profile redirect and copies the files back down to the desktop. - Only new files or files that don't exist on the local computer are copied.
+    Utility for PC profile owners.
+    The user runs the terminal file (provided in a .bat shell) which calls PowerShell to launch a GUI and connect post migrated PST files to Outlook.
+    	Note: These files are collapsed so simply need to be expanded by the user once they have been reconnected to outlook.
 .DESCRIPTION  
-    ***The folders (and sub-folders) copied back to the local machine are***
-        - Desktop,
-        - My Documents (including Outlook),
-        - Favorites,
-        - My Pictures
-    Type of Script - Passive (requirements necessitate that the TM manage his/her account by running the script themselves.)
-    Note - If files are already present they aren't over writen unless a newer copy exists. 
+    Type of Script - The intention is to remove the need for touch by remote tech support.
 .NOTES  
-    File Name  : Undo-UST.ps1
+    File Name  : reconnect.ps1
     Version    : 1.0  
     Caveats    : Used-in Midwest Region (ONLY)
-                 Not intended for laptop users!
     Created    : 11/27/2018 by Jim.Berkenbaugh@Wholefoods.com
     Requires   : PowerShell V2 [or greater]
 .EXAMPLE 
@@ -21,15 +16,9 @@
 
 #>
 
-#######################################################################################
+##################
 # START OF SCRIPT!
-# This begining of the script provides variables for unattended running.
-#   - The date is selected.
-#   - The windows version is determined.
-#   - The three letter store abbreviation is determined by the computer name.
-#   - The user folder directory is determined.
-#     BEFORE EXCUTION OF THE SCRIPT EXISTANCE OF A NETWORK DIRECTORY IS DETERMINED.
-#######################################################################################
+##################
 
 $erroractionpreference = "SilentlyContinue"
 
@@ -49,13 +38,6 @@ Write-Host "`n"
 Write-Host "`n"
 Write-Host "`n"
 
-#######################################################################################
-# LOCAL PST RECONNECTION...
-# Disconnect ALL PST files from Outlook - These will be network linked
-# From the copy function above all PST files have been copied to a local location.
-# Reconnect the standard "Local Mail" PST, which is directed to firstname.lastname.pst
-#######################################################################################
-
 # Wait Message
 $Task                 = "Local PST Reconnection"
 Write-Progress -Activity $Activity -Status $Task
@@ -70,7 +52,7 @@ if (!(Test-Path "$env:userprofile\My Documents\Outlook Files"))
     Add-type -assembly "Microsoft.Office.Interop.Outlook" | out-null
     $outlook = new-object -comobject outlook.application
     $namespace = $outlook.GetNameSpace("MAPI")
-    dir ì$env:USERPROFILE\Documents\Outlook Files\*.pstî | % { $namespace.AddStore($_.FullName) }
+    dir ‚Äú$env:USERPROFILE\Documents\Outlook Files\*.pst‚Äù | % { $namespace.AddStore($_.FullName) }
 
     Write-Host "Locally reconnected all Outlook files..."
     Write-Host "OPERATION COMPLETE!"
@@ -112,8 +94,6 @@ $form.controls.add($button2)
 $Labeltext = @"
 Reconnect Personal Folders (PSTs, Archive) folders
 to Outlook.
-
-CAUTION! Before running this close your email.
 
     ============= DIRECTIONS =============
 1- Close your email,
